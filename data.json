@@ -1,0 +1,54 @@
+{
+  "voorraad": [
+    "Kiwi",
+    "Kipfilet",
+    "Yoghurt",
+    "Ei"
+  ],
+  "boodschappenlijst": [
+    {
+      "naam": "Deo",
+      "categorie": "Overig",
+      "gekocht": false
+    }
+  ],
+  "dagboek": {
+    "2026-05-03": [
+      {
+        "naam": "broodje uit de oven met philedelphia/kipfilet",
+        "kcal": 600,
+        "eiwit": 30,
+        "type": "lunch"
+      },
+      {
+        "naam": "koekjes",
+        "kcal": 500,
+        "eiwit": 10,
+        "type": "snack"
+      },
+      {
+        "naam": "Rijst, kip en groenten",
+        "kcal": 500,
+        "eiwit": 20,
+        "type": "avondeten"
+      },
+      {
+        "naam": "Koffie",
+        "kcal": 5,
+        "eiwit": 0,
+        "type": "snack",
+        "id": "3"
+      },
+      {
+        "naam": "Kiwi",
+        "kcal": 42,
+        "eiwit": 1,
+        "type": "snack",
+        "id": "4"
+      }
+    ]
+  },
+  "water": {
+    "2026-05-03": 9
+  }
+}

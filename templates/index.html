@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Ocke's Nutrition App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f0f2f0;
+            color: #1a1a1a;
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #032205 0%, #0a4a0a 100%);
+            color: white;
+            padding: 50px 20px 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .header-naam {
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        .header-datum {
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header-sub {
+            font-size: 13px;
+            opacity: 0.6;
+        }
+
+        .streak-badge {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .waarschuwing {
+            background: #fff3cd;
+            border-left: 4px solid #f39c12;
+            padding: 10px 15px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 15px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(3, 34, 5, 0.08);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:active {
+            transform: scale(0.97);
+        }
+
+        .stat-card .getal {
+            font-size: 32px;
+            font-weight: 800;
+            color: #032205;
+            line-height: 1;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .stat-card .sub {
+            font-size: 11px;
+            color: #bbb;
+            margin-top: 2px;
+        }
+
+        .voortgang {
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .voortgang-balk {
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #032205, #0a7a0a);
+            transition: width 0.5s ease;
+        }
+
+        .voortgang-balk.oranje {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+        }
+
+        .voortgang-balk.rood {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+
+        .voortgang-pct {
+            font-size: 10px;
+            color: #aaa;
+            margin-top: 3px;
+        }
+
+        .week-grafiek {
+            background: white;
+            margin: 0 15px 15px;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 12px rgba(3, 34, 5, 0.08);
+        }
+
+        .week-grafiek h3 {
+            font-size: 14px;
+            color: #032205;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .week-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 60px;
+        }
+
+        .week-bar-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .week-bar {
+            width: 100%;
+            background: linear-gradient(180deg, #0a7a0a, #032205);
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+            transition: height 0.5s ease;
+        }
+
+        .week-bar.vandaag {
+            background: linear-gradient(180deg, #4CAF50, #032205);
+        }
+
+        .week-dag {
+            font-size: 10px;
+            color: #aaa;
+        }
+
+        .water-tracker {
+            background: white;
+            margin: 0 15px 15px;
+            border-radius: 16px;
+            padding: 14px 16px;
+            box-shadow: 0 2px 12px rgba(3, 34, 5, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .water-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .water-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #032205;
+        }
+
+        .water-sub {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .water-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .water-getal {
+            font-size: 22px;
+            font-weight: 800;
+            color: #032205;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .water-knop {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #f0f7f0;
+            color: #032205;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .sectie {
+            background: white;
+            margin: 0 15px 15px;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 12px rgba(3, 34, 5, 0.08);
+        }
+
+        .sectie-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .sectie-header h2 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #032205;
+        }
+
+        .sectie-header .pijl {
+            font-size: 12px;
+            color: #aaa;
+            transition: transform 0.2s;
+        }
+
+        .ontbijt-item {
+            background: linear-gradient(135deg, #f0f9f0, #e8f5e8);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #444;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            border: 1px solid #d4edda;
+        }
+
+        .maaltijd-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 14px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .maaltijd-item:last-child {
+            border-bottom: none;
+        }
+
+        .maaltijd-links {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .maaltijd-naam {
+            font-weight: 500;
+        }
+
+        .maaltijd-badge {
+            font-size: 10px;
+            background: #f0f7f0;
+            color: #032205;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        .maaltijd-rechts {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .maaltijd-waarden {
+            font-size: 12px;
+            color: #888;
+            text-align: right;
+        }
+
+        .verwijder-knop {
+            color: #e74c3c;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+        }
+
+        .snelknoppen {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 10px 0;
+        }
+
+        .snelknop {
+            background: #f0f7f0;
+            border: 1.5px solid #d4edda;
+            color: #032205;
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-weight: 500;
+        }
+
+        .snelknop:active {
+            background: #032205;
+            color: white;
+            transform: scale(0.95);
+        }
+
+        .favorieten {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 8px 0;
+        }
+
+        .favoriet-knop {
+            background: #fff8e1;
+            border: 1.5px solid #ffd54f;
+            color: #7a5c00;
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .favoriet-knop:active {
+            background: #ffd54f;
+            transform: scale(0.95);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        input,
+        select,
+        textarea {
+            border: 1.5px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+            flex: 1;
+            min-width: 80px;
+            background: #fafafa;
+            transition: border-color 0.2s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #032205;
+            background: white;
+        }
+
+        .btn {
+            background: #032205;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.15s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            opacity: 0.9;
+        }
+
+        .btn-groen {
+            background: #2d7a2d;
+        }
+
+        .btn-groot {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+
+        .categorie-label {
+            font-size: 11px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 12px 0 6px;
+            font-weight: 600;
+        }
+
+        .boodschap-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 14px;
+        }
+
+        .boodschap-item:last-child {
+            border-bottom: none;
+        }
+
+        .gekocht-knop {
+            background: #f0f7f0;
+            border: 1.5px solid #d4edda;
+            color: #032205;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .supermarkt-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #032205, #0a4a0a);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .voorraad-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .voorraad-item {
+            background: #f0f7f0;
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #d4edda;
+        }
+
+        .voorraad-verwijder {
+            cursor: pointer;
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 70px;
+            resize: none;
+            font-size: 14px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.actief {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            width: 85%;
+            max-width: 340px;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal h3 {
+            margin-bottom: 8px;
+            color: #032205;
+            font-size: 18px;
+        }
+
+        .modal p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .modal-knoppen {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .modal-knoppen button {
+            flex: 1;
+        }
+
+        .supermarkt-view {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #032205;
+            z-index: 200;
+            overflow-y: auto;
+            padding: 40px 20px 20px;
+        }
+
+        .supermarkt-view.actief {
+            display: block;
+        }
+
+        .supermarkt-close {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .supermarkt-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .supermarkt-check {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            background: transparent;
+            color: white;
+            font-size: 16px;
+        }
+
+        .supermarkt-check.gedaan {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }
+
+        .supermarkt-cat {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 16px 0 8px;
+        }
+
+        .loading-bar {
+            display: none;
+            height: 3px;
+            background: linear-gradient(90deg, #032205, #4CAF50, #032205);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 2px;
+            margin-top: 8px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .pb {
+            padding-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-top">
+            <span class="header-naam">👋 {{ naam }}</span>
+            <span class="header-datum">{{ datum }}</span>
+        </div>
+        <h1>Nutrition App</h1>
+        <div class="header-sub">{{ kcal_gehad }} / {{ kcal_doel }} kcal · {{ eiwit_gehad }} / {{ eiwit_doel }}g eiwit
+        </div>
+        {% if streak > 0 %}
+        <div class="streak-badge">🔥 {{ streak }} dag streak</div>
+        {% endif %}
+    </div>
+
+    {% if waarschuwing %}
+    <div class="waarschuwing">
+        ⚠️ Het is al laat en je hebt nog {{ kcal_nog }} kcal over. Vergeet je avondeten niet!
+    </div>
+    {% endif %}
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stat-card">
+            <div class="getal">{{ kcal_nog }}</div>
+            <div class="label">kcal over</div>
+            <div class="sub">{{ kcal_gehad }} gegeten</div>
+            <div class="voortgang">
+                <div class="voortgang-balk {% if kcal_gehad > kcal_doel %}rood{% elif kcal_gehad > kcal_doel * 0.85 %}oranje{% endif %}"
+                    style="width: {{ [[((kcal_gehad / kcal_doel) * 100)|int, 0]|max, 100]|min }}%"></div>
+            </div>
+            <div class="voortgang-pct">{{ [[((kcal_gehad / kcal_doel) * 100)|int, 0]|max, 100]|min }}%</div>
+        </div>
+        <div class="stat-card">
+            <div class="getal">{{ eiwit_nog }}g</div>
+            <div class="label">eiwit over</div>
+            <div class="sub">{{ eiwit_gehad }}g binnen</div>
+            <div class="voortgang">
+                <div class="voortgang-balk {% if eiwit_gehad > eiwit_doel %}rood{% elif eiwit_gehad > eiwit_doel * 0.85 %}oranje{% endif %}"
+                    style="width: {{ [[((eiwit_gehad / eiwit_doel) * 100)|int, 0]|max, 100]|min }}%"></div>
+            </div>
+            <div class="voortgang-pct">{{ [[((eiwit_gehad / eiwit_doel) * 100)|int, 0]|max, 100]|min }}%</div>
+        </div>
+    </div>
+
+    <!-- WEEK GRAFIEK -->
+    <div class="week-grafiek">
+        <h3>📊 Deze week</h3>
+        <div class="week-bars">
+            {% for dag in week %}
+            {% set hoogte = [[((dag.kcal / dag.doel) * 56)|int, 4]|max, 56]|min %}
+            <div class="week-bar-wrap">
+                <div class="week-bar {% if loop.last %}vandaag{% endif %}" style="height: {{ hoogte }}px"></div>
+                <div class="week-dag">{{ dag.dag }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- WATER -->
+    <div class="water-tracker">
+        <div class="water-left">
+            <span style="font-size: 24px;">💧</span>
+            <div>
+                <div class="water-label">Water</div>
+                <div class="water-sub">Doel: 8 glazen</div>
+            </div>
+        </div>
+        <div class="water-controls">
+            <button class="water-knop" onclick="updateWater('min')">−</button>
+            <div class="water-getal" id="water-getal">{{ water }}</div>
+            <button class="water-knop" onclick="updateWater('plus')">+</button>
+        </div>
+    </div>
+
+    <!-- DAGBOEK -->
+    <div class="sectie">
+        <h2 style="color: #032205; margin-bottom: 12px; font-size: 16px; font-weight: 700;">📋 Dagboek vandaag</h2>
+
+        <div class="ontbijt-item">
+            <span>{{ vast_ontbijt.naam }}</span>
+            <span style="font-size: 12px; color: #666;">{{ vast_ontbijt.kcal }} kcal · {{ vast_ontbijt.eiwit }}g</span>
+        </div>
+
+        {% for item in dagboek %}
+        <div class="maaltijd-item">
+            <div class="maaltijd-links">
+                <span class="maaltijd-naam">{{ item.naam }}</span>
+                <span class="maaltijd-badge">{{ item.type }}</span>
+            </div>
+            <div class="maaltijd-rechts">
+                <div class="maaltijd-waarden">
+                    {{ item.kcal }} kcal<br>{{ item.eiwit }}g eiwit
+                </div>
+                <span class="verwijder-knop" onclick="verwijderMaaltijd({{ loop.index0 }})">×</span>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="loading-bar" id="maaltijd-loading"></div>
+
+        {% if favorieten %}
+        <div style="margin-top: 10px;">
+            <div
+                style="font-size: 11px; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+                ⭐ Favorieten</div>
+            <div class="favorieten">
+                {% for fav in favorieten %}
+                <button class="favoriet-knop"
+                    onclick="voegFavorietToe('{{ fav.naam }}', {{ fav.kcal }}, {{ fav.eiwit }})">{{ fav.naam }}</button>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div style="margin-top: 10px;">
+            <div
+                style="font-size: 11px; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+                Snel toevoegen</div>
+            <div class="snelknoppen">
+                {% for product in snelproducten %}
+                <button class="snelknop" onclick="snelToevoegen('{{ product }}')">{{ product }}</button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <input type="text" id="maaltijd-naam" placeholder="Wat heb je gegeten?">
+            <select id="maaltijd-type" style="max-width: 110px;">
+                <option value="lunch">Lunch</option>
+                <option value="avondeten">Avondeten</option>
+                <option value="snack">Snack</option>
+            </select>
+            <button class="btn btn-groen" onclick="voegMaaltijdToe()">+</button>
+        </div>
+    </div>
+
+    <!-- BOODSCHAPPENLIJST -->
+    <div class="sectie">
+        <div class="sectie-header" onclick="toggleSectie('boodschappen-content', 'boodschappen-pijl')">
+            <h2>🛒 Boodschappenlijst</h2>
+            <span class="pijl" id="boodschappen-pijl">▼</span>
+        </div>
+        <div id="boodschappen-content">
+            <button class="supermarkt-btn" onclick="openSupermarkt()">
+                🛍️ Supermarkt modus
+            </button>
+
+            {% if boodschappenlijst %}
+            {% for categorie in categorieen %}
+            {% set items = boodschappenlijst | selectattr("categorie", "equalto", categorie) | list %}
+            {% if items %}
+            <div class="categorie-label">{{ categorie }}</div>
+            {% for item in items %}
+            <div class="boodschap-item">
+                <span>{{ item.naam }}</span>
+                <button class="gekocht-knop" onclick="markeerGekocht('{{ item.naam }}')">✓ Gekocht</button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+            {% else %}
+            <p style="color: #bbb; font-size: 14px; text-align: center; padding: 10px 0;">Geen boodschappen nodig 🎉</p>
+            {% endif %}
+
+            <div class="form-row" style="margin-top: 15px;">
+                <input type="text" id="boodschap-naam" placeholder="Product toevoegen">
+                <select id="boodschap-categorie" style="max-width: 140px;">
+                    {% for cat in categorieen %}
+                    <option>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-groen" onclick="voegBoodschapToe()">+</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- IN HUIS -->
+    <div class="sectie">
+        <div class="sectie-header" onclick="toggleSectie('inhuis-content', 'inhuis-pijl')">
+            <h2>🏠 In huis</h2>
+            <span class="pijl" id="inhuis-pijl">▶</span>
+        </div>
+        <div id="inhuis-content" style="display:none">
+            <div class="voorraad-grid">
+                {% for item in voorraad %}
+                <div class="voorraad-item">
+                    {{ item }}
+                    <span class="voorraad-verwijder" onclick="verwijderVoorraad('{{ item }}')">×</span>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="form-row" style="margin-top: 12px;">
+                <input type="text" id="voorraad-naam" placeholder="Toevoegen aan voorraad">
+                <button class="btn btn-groen" onclick="voegVoorraadToe()">+</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTITIE -->
+    <div class="sectie pb">
+        <div class="sectie-header" onclick="toggleSectie('notitie-content', 'notitie-pijl')">
+            <h2>📝 Notitie vandaag</h2>
+            <span class="pijl" id="notitie-pijl">▶</span>
+        </div>
+        <div id="notitie-content" style="display:none">
+            <textarea id="notitie-tekst" placeholder="Hoe voelde je je vandaag?">{{ notitie }}</textarea>
+            <button class="btn btn-groot" onclick="slaNotitieOp()" style="margin-top: 8px;">Opslaan</button>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <h3>🛒 Op de lijst?</h3>
+            <p id="modal-tekst"></p>
+            <div class="modal-knoppen">
+                <button class="btn" style="background:#e74c3c" onclick="sluitModal()">Nee</button>
+                <button class="btn btn-groen" onclick="bevestigBoodschap()">Ja, voeg toe</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUPERMARKT VIEW -->
+    <div class="supermarkt-view" id="supermarkt-view">
+        <button class="supermarkt-close" onclick="sluitSupermarkt()">×</button>
+        <h2 style="color: white; margin-bottom: 20px; font-size: 22px;">🛍️ Supermarkt</h2>
+        <div id="supermarkt-lijst"></div>
+    </div>
+
+    <script>
+        let modalProduct = "";
+
+        async function voegMaaltijdToe() {
+            const naam = document.getElementById("maaltijd-naam").value.trim();
+            const type = document.getElementById("maaltijd-type").value;
+            if (!naam) return;
+            document.getElementById("maaltijd-loading").style.display = "block";
+            const f1 = new FormData();
+            f1.append("naam", naam);
+            const res = await fetch("/schat_voeding", { method: "POST", body: f1 });
+            const data = await res.json();
+            document.getElementById("maaltijd-loading").style.display = "none";
+            const f2 = new FormData();
+            f2.append("naam", naam);
+            f2.append("kcal", data.kcal);
+            f2.append("eiwit", data.eiwit);
+            f2.append("type", type);
+            await fetch("/voeg_maaltijd_toe", { method: "POST", body: f2 });
+            location.reload();
+        }
+
+        async function snelToevoegen(naam) {
+            document.getElementById("maaltijd-loading").style.display = "block";
+            const f1 = new FormData();
+            f1.append("naam", naam);
+            const res = await fetch("/schat_voeding", { method: "POST", body: f1 });
+            const data = await res.json();
+            document.getElementById("maaltijd-loading").style.display = "none";
+            const f2 = new FormData();
+            f2.append("naam", naam);
+            f2.append("kcal", data.kcal);
+            f2.append("eiwit", data.eiwit);
+            f2.append("type", "snack");
+            await fetch("/voeg_maaltijd_toe", { method: "POST", body: f2 });
+            location.reload();
+        }
+
+        async function voegFavorietToe(naam, kcal, eiwit) {
+            const f = new FormData();
+            f.append("naam", naam);
+            f.append("kcal", kcal);
+            f.append("eiwit", eiwit);
+            f.append("type", "favoriet");
+            await fetch("/voeg_maaltijd_toe", { method: "POST", body: f });
+            location.reload();
+        }
+
+        async function verwijderMaaltijd(index) {
+            const f = new FormData();
+            f.append("index", index);
+            await fetch("/verwijder_maaltijd", { method: "POST", body: f });
+            location.reload();
+        }
+
+        async function voegBoodschapToe() {
+            const naam = document.getElementById("boodschap-naam").value.trim();
+            const categorie = document.getElementById("boodschap-categorie").value;
+            if (!naam) return;
+            const f = new FormData();
+            f.append("naam", naam);
+            f.append("categorie", categorie);
+            await fetch("/voeg_boodschap_toe", { method: "POST", body: f });
+            document.getElementById("boodschap-naam").value = "";
+            location.reload();
+        }
+
+        async function markeerGekocht(naam) {
+            const f = new FormData();
+            f.append("naam", naam);
+            await fetch("/markeer_gekocht", { method: "POST", body: f });
+            location.reload();
+        }
+
+        function verwijderVoorraad(naam) {
+            modalProduct = naam;
+            document.getElementById("modal-tekst").textContent = `"${naam}" is op. Wil je het op de boodschappenlijst zetten?`;
+            document.getElementById("modal").classList.add("actief");
+        }
+
+        async function sluitModal() {
+            const f = new FormData();
+            f.append("naam", modalProduct);
+            await fetch("/verwijder_voorraad", { method: "POST", body: f });
+            document.getElementById("modal").classList.remove("actief");
+            location.reload();
+        }
+
+        async function bevestigBoodschap() {
+            const f1 = new FormData();
+            f1.append("naam", modalProduct);
+            await fetch("/verwijder_voorraad", { method: "POST", body: f1 });
+            const f2 = new FormData();
+            f2.append("naam", modalProduct);
+            f2.append("categorie", "Overig");
+            await fetch("/voeg_boodschap_toe", { method: "POST", body: f2 });
+            document.getElementById("modal").classList.remove("actief");
+            location.reload();
+        }
+
+        async function voegVoorraadToe() {
+            const naam = document.getElementById("voorraad-naam").value.trim();
+            if (!naam) return;
+            const f = new FormData();
+            f.append("naam", naam);
+            await fetch("/voeg_voorraad_toe", { method: "POST", body: f });
+            location.reload();
+        }
+
+        async function updateWater(actie) {
+            const f = new FormData();
+            f.append("actie", actie);
+            const res = await fetch("/water", { method: "POST", body: f });
+            const data = await res.json();
+            document.getElementById("water-getal").textContent = data.water;
+        }
+
+        async function slaNotitieOp() {
+            const tekst = document.getElementById("notitie-tekst").value;
+            const f = new FormData();
+            f.append("tekst", tekst);
+            await fetch("/notitie", { method: "POST", body: f });
+            alert("Notitie opgeslagen!");
+        }
+
+        function openSupermarkt() {
+            const view = document.getElementById("supermarkt-view");
+            const lijst = document.getElementById("supermarkt-lijst");
+            lijst.innerHTML = "";
+            document.querySelectorAll(".categorie-label, .boodschap-item").forEach(el => {
+                if (el.classList.contains("categorie-label")) {
+                    const catDiv = document.createElement("div");
+                    catDiv.className = "supermarkt-cat";
+                    catDiv.textContent = el.textContent;
+                    lijst.appendChild(catDiv);
+                } else {
+                    const naam = el.querySelector("span").textContent;
+                    const item = document.createElement("div");
+                    item.className = "supermarkt-item";
+                    item.innerHTML = `
+                <span>${naam}</span>
+                <button class="supermarkt-check" onclick="supermarktCheck(this, '${naam}')"></button>
+            `;
+                    lijst.appendChild(item);
+                }
+            });
+            view.classList.add("actief");
+        }
+
+        async function supermarktCheck(btn, naam) {
+            btn.classList.toggle("gedaan");
+            btn.textContent = btn.classList.contains("gedaan") ? "✓" : "";
+            if (btn.classList.contains("gedaan")) {
+                const f = new FormData();
+                f.append("naam", naam);
+                await fetch("/markeer_gekocht", { method: "POST", body: f });
+            }
+        }
+
+        function sluitSupermarkt() {
+            document.getElementById("supermarkt-view").classList.remove("actief");
+            location.reload();
+        }
+
+        function toggleSectie(contentId, pijlId) {
+            const content = document.getElementById(contentId);
+            const pijl = document.getElementById(pijlId);
+            if (content.style.display === "none") {
+                content.style.display = "block";
+                pijl.textContent = "▼";
+            } else {
+                content.style.display = "none";
+                pijl.textContent = "▶";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
