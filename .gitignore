@@ -2,4 +2,4 @@ __pycache__/
 *.pyc
 .env
 data.json
-.DS_Store
+.DS_Store.DS_Store
